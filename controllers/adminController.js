@@ -13,6 +13,7 @@ exports.loginAdmin = async (req, res) => {
     }
 
     const admin = rows[0];
+  
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -20,7 +21,7 @@ exports.loginAdmin = async (req, res) => {
 
     // Create token
     const token = jwt.sign(
-      { id: admin.id, email: admin.email, role: 'admin' },
+      { id: admin.admin_id, email: admin.email, role: 'admin' },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
     );
@@ -36,8 +37,7 @@ exports.loginAdmin = async (req, res) => {
     res.status(200).json({
       message: 'Login successful',
       admin: {
-        id: admin.id,
-        name: admin.name,
+        name: admin.full_name,
         email: admin.email
       }
     });
@@ -46,4 +46,14 @@ exports.loginAdmin = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.logoutAdmin = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(200).json({ message: "Logged out successfully" });
+};
+
 
