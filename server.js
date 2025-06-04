@@ -26,6 +26,9 @@ app.use("/api", studentRoutes);
 const examScheduleRoutes = require('./routes/examScheduleRoutes');
 app.use('/api/exam-schedules', examScheduleRoutes);
 
+const studentsInfoRoutes = require("./routes/studentsInfoRoutes");
+app.use("/api/students", studentsInfoRoutes);
+
 
 
 

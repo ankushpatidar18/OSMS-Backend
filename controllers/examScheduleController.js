@@ -1,11 +1,18 @@
 const pool = require('../db');
-
 // Get all schedules for a class and exam
 exports.getSchedules = async (req, res) => {
   const { className, examId } = req.query;
   try {
     const [rows] = await pool.query(
-      `SELECT es.*, s.subject_name
+      `SELECT 
+         es.schedule_id,
+         es.subject_id,
+         DATE_FORMAT(es.exam_date, '%Y-%m-%d') AS exam_date,
+         es.exam_day,
+         es.exam_time,
+         es.class_name,
+         es.exam_id,
+         s.subject_name
        FROM exam_schedules es
        JOIN subjects s ON es.subject_id = s.subject_id
        WHERE es.class_name = ? AND es.exam_id = ?
@@ -17,6 +24,7 @@ exports.getSchedules = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Add a new schedule
 exports.addSchedule = async (req, res) => {
