@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db"); 
 
+// Route to get all students with optional filters
 router.get("/", async (req, res) => {
   const { name, class: className, role } = req.query;
 
@@ -67,7 +68,7 @@ function buildUpdateQuery(table, idField, data, allowedFields) {
 }
 
 
-
+// Route to update student information
 router.put("/:id", async (req, res) => {
   const student_id = req.params.id;
   const {
