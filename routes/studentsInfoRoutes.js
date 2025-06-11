@@ -5,7 +5,7 @@ const db = require("../db");
 
 // Route to get all students with optional filters
 router.get("/", async (req, res) => {
-  const { name, class: className, role } = req.query;
+  const { name, class: className, roll_number } = req.query;
 
   try {
     let query = `
@@ -32,9 +32,9 @@ router.get("/", async (req, res) => {
       query += " AND s.class = ?";
       values.push(className);
     }
-    if (role) {
-      query += " AND s.role = ?";
-      values.push(role);
+    if (roll_number) {
+      query += " AND s.roll_number = ?";
+      values.push(roll_number);
     }
 
     const [results] = await db.execute(query, values);
@@ -84,7 +84,7 @@ router.put("/:id", async (req, res) => {
     session,
     is_repeater,
     mobile_number,
-    role,
+    roll_number,
     father_name,
     mother_name,
     admission_no,
@@ -115,7 +115,7 @@ router.put("/:id", async (req, res) => {
         session,
         is_repeater,
         mobile_number,
-        role,
+        roll_number,
       },
       [
         "name",
@@ -130,7 +130,7 @@ router.put("/:id", async (req, res) => {
         "session",
         "is_repeater",
         "mobile_number",
-        "role",
+        "roll_number",
       ]
     );
     if (studentUpdate) {

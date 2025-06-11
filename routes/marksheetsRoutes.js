@@ -14,7 +14,7 @@ router.get('/marksheet/:class/:session', async (req, res) => {
         s.sssmid,
         s.class,
         s.medium,
-        s.role,
+        s.roll_number,
         DATE_FORMAT(s.dob, '%d/%m/%Y') as dob,
         p.father_name,
         p.mother_name,
@@ -125,16 +125,20 @@ router.get('/marksheet/:class/:session', async (req, res) => {
 
       // Calculate overall grade
       let totalGrade;
-      if (percentage >= 90) totalGrade = 'A';
-      else if (percentage >= 75) totalGrade = 'B';
-      else if (percentage >= 50) totalGrade = 'C';
-      else if (percentage >= 33) totalGrade = 'D';
-      else totalGrade = 'F';
+
+      if (percentage >= 86) totalGrade = 'A+';
+        else if (percentage >= 76) totalGrade = 'A';
+        else if (percentage >= 66) totalGrade = 'B+';
+        else if (percentage >= 56) totalGrade = 'B';
+        else if (percentage >= 51) totalGrade = 'C+';
+        else if (percentage >= 46) totalGrade = 'C';
+        else if (percentage >= 33) totalGrade = 'D';
+        else totalGrade = 'F';
 
       return {
         id: student.student_id,
         sNo: index + 1,
-        rollNo: student.role || student.student_id,
+        rollNo: student.roll_number || '',
         sssId: student.sssmid || '',
         scholarNo: student.admission_no || '',
         medium: (student.medium || '').toUpperCase(),
