@@ -29,14 +29,12 @@ app.use('/api/exam-schedules', examScheduleRoutes);
 const studentsInfoRoutes = require("./routes/studentsInfoRoutes");
 app.use("/api/students", studentsInfoRoutes);
 
-const marksheetRoutes = require('./routes/marksheetRoutes');
-app.use('/api/marksheet', marksheetRoutes);
-
 app.use('/api/classes', require('./routes/classesRoutes'));
 app.use('/api/subjects', require('./routes/subjectsRoutes'));
 app.use('/api/exams', require('./routes/examsRoutes'));
 app.use('/api/students', require('./routes/studentsRoutes'));
 app.use('/api/marks', require('./routes/marksRoutes'));
+app.use('/api/marksheets', require('./routes/marksheetsRoutes'));
 
 
 
