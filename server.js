@@ -35,6 +35,9 @@ app.use('/api/exams', require('./routes/examsRoutes'));
 app.use('/api/students', require('./routes/studentsRoutes'));
 app.use('/api/marks', require('./routes/marksRoutes'));
 app.use('/api/marksheets', require('./routes/marksheetsRoutes'));
+app.use('/api/students', require('./routes/addStudentsRoutes'));
+app.use('/api/students', require('./routes/deleteStudentsRoutes'));
+
 
 
 
