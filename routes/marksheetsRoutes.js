@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+// Helper function to check if a class is in the middle group (6-8)
+const isMiddleClass = (className) => {
+  // Accepts both "6", "7", "8" and "6 TH", etc.
+  const classNum = parseInt(String(className).replace(/\D/g, ''));
+  return !isNaN(classNum) && classNum >= 6 && classNum <= 8;
+};
+
 router.get('/marksheet/:class/:session', async (req, res) => {
   const { class: className, session } = req.params;
 
@@ -61,12 +68,13 @@ router.get('/marksheet/:class/:session', async (req, res) => {
     // Process data for each student
     const result = students.map((student, index) => {
       const studentSubjects = subjects.map(subject => {
+        // Build subject data, conditionally including 'monthly'
         const subjectData = {
           name: subject.subject_name.toUpperCase(),
           maxMarks: subject.max_marks,
           annualExam: 0,
           halfYearly: 0,
-          monthly: 0,
+          ...(isMiddleClass(className) ? {} : { monthly: 0 }),
           project: 0,
           total: 0,
           grade: null
@@ -92,10 +100,12 @@ router.get('/marksheet/:class/:session', async (req, res) => {
           } else if (examName.includes('half-yearly') || examName.includes('half yearly')) {
             const halfYearlyCeil = Math.ceil(marksObtained * contributionRatio);
             subjectData.halfYearly = halfYearlyCeil;
-            weightedTotal += weightedMarks; 
+            weightedTotal += halfYearlyCeil;
           } else if (examName.includes('monthly')) {
-            subjectData.monthly = marksObtained;
-            weightedTotal += weightedMarks;
+            if (!isMiddleClass(className)) {
+              subjectData.monthly = marksObtained;
+              weightedTotal += weightedMarks;
+            }
           } else if (examName.includes('project')) {
             subjectData.project = marksObtained;
             weightedTotal += weightedMarks;
@@ -125,15 +135,14 @@ router.get('/marksheet/:class/:session', async (req, res) => {
 
       // Calculate overall grade
       let totalGrade;
-
       if (percentage >= 86) totalGrade = 'A+';
-        else if (percentage >= 76) totalGrade = 'A';
-        else if (percentage >= 66) totalGrade = 'B+';
-        else if (percentage >= 56) totalGrade = 'B';
-        else if (percentage >= 51) totalGrade = 'C+';
-        else if (percentage >= 46) totalGrade = 'C';
-        else if (percentage >= 33) totalGrade = 'D';
-        else totalGrade = 'F';
+      else if (percentage >= 76) totalGrade = 'A';
+      else if (percentage >= 66) totalGrade = 'B+';
+      else if (percentage >= 56) totalGrade = 'B';
+      else if (percentage >= 51) totalGrade = 'C+';
+      else if (percentage >= 46) totalGrade = 'C';
+      else if (percentage >= 33) totalGrade = 'D';
+      else totalGrade = 'F';
 
       return {
         id: student.student_id,
