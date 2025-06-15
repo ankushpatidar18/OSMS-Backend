@@ -2,7 +2,7 @@ const db = require('../db');
 
 exports.getExamsForClassSubject = async (classSubjectId) => {
   const [rows] = await db.query(`
-    SELECT e.exam_id, e.name, e.total_marks
+    SELECT e.exam_id, e.name, e.total_marks,e.session
     FROM exam_schedules es
     JOIN exams e ON es.exam_id = e.exam_id
     WHERE es.class_name = (

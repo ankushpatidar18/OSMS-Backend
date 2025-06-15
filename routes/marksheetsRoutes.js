@@ -29,9 +29,9 @@ router.get('/marksheet/:class/:session', async (req, res) => {
       FROM students s
       LEFT JOIN parents p ON s.student_id = p.student_id
       LEFT JOIN admissions a ON s.student_id = a.student_id
-      WHERE s.class = ?
+      WHERE s.class = ? AND s.session = ?
       ORDER BY s.name
-    `, [className]);
+    `, [className,session]);
 
     if (students.length === 0) {
       return res.json([]);

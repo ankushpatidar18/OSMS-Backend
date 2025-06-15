@@ -39,6 +39,9 @@ app.use('/api/students', require('./routes/addStudentsRoutes'));
 app.use('/api/students', require('./routes/deleteStudentsRoutes'));
 
 
+app.use('/api/matrix', require('./routes/exammarksMatrix'));
+
+
 
 
 app.get('/', (req, res) => {
