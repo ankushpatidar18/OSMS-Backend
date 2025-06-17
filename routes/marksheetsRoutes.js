@@ -43,7 +43,6 @@ router.get('/marksheet/:class/:session', async (req, res) => {
       FROM class_subjects cs
       JOIN subjects s ON cs.subject_id = s.subject_id
       WHERE cs.class = ?
-      ORDER BY s.subject_name
     `, [className]);
 
     // Get all marks data for students in this class

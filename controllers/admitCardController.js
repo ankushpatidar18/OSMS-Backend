@@ -1,4 +1,3 @@
-
 const pool = require('../db');
 
 // Get all classes
@@ -23,15 +22,15 @@ exports.getExams = async (req, res) => {
 
 // Get admit card data for a class and exam
 exports.getAdmitCardData = async (req, res) => {
-  const { className, examId } = req.query;
+  const { className, examId, session } = req.query;
   try {
-     // 1. Get students of the class WITH parent names
+     // 1. Get students of the class WITH parent names, filtered by session
     const [students] = await pool.query(
       `SELECT s.*, p.father_name, p.mother_name
        FROM students s
        LEFT JOIN parents p ON s.student_id = p.student_id
-       WHERE s.class = ?`,
-      [className]
+       WHERE s.class = ? AND s.session = ?`,
+      [className, session]
     );
 
     // 2. Get exam info
