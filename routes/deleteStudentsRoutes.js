@@ -3,6 +3,10 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 
 
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.use(authMiddleware);
+
 // DELETE selected students safely with transaction
 router.delete('/delete-many', async (req, res) => {
   const { studentIds } = req.body;

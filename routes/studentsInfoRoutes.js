@@ -3,6 +3,10 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db"); 
 
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.use(authMiddleware);
+
 // Route to get all students with optional filters
 router.get("/", async (req, res) => {
   const { name, class: className, roll_number } = req.query;

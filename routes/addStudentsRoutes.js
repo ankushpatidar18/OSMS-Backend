@@ -3,6 +3,10 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 
 
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.use(authMiddleware);
+
 router.post('/full-register', async (req, res) => {
   const connection = await pool.getConnection();
   try {

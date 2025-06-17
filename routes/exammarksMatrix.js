@@ -7,6 +7,10 @@ const examCtrl = require('../controllers/entrymarksMatrix/examController');
 const marksCtrl = require('../controllers/entrymarksMatrix/marksController');
 const classCtrl = require('../controllers/entrymarksMatrix/classController');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.use(authMiddleware);
+
 router.get('/students', studentCtrl.getStudentsByClassAndSession);
 router.get('/subjects/:class', subjectCtrl.getSubjectsByClass);
 router.get('/exams/:class/:session', examCtrl.getExamsForClass);

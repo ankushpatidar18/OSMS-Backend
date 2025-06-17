@@ -5,20 +5,21 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 
 const app = express();
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(cors({
   origin: 'http://localhost:5173', 
   credentials: true              
 }));
 
-app.use(express.json());
-app.use(cookieParser());
-
-const admitCardRoutes = require('./routes/admitCardRoutes');
-app.use('/api', admitCardRoutes);
 
 const authRoutes = require('./routes/auth');
 app.use('/api', authRoutes);
+const admitCardRoutes = require('./routes/admitCardRoutes');
+app.use('/api', admitCardRoutes);
+
+
 
 const uploadStudentRoutes = require("./routes/uploadStudentRoutes");
 app.use("/api", uploadStudentRoutes);
