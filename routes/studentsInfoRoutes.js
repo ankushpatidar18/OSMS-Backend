@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const db = require("../db"); 
@@ -9,7 +8,11 @@ router.use(authMiddleware);
 
 // Route to get all students with optional filters
 router.get("/", async (req, res) => {
-  const { name, class: className, roll_number } = req.query;
+  const { session, name, class: className, roll_number } = req.query;
+
+  if (!session) {
+    return res.status(400).json({ error: "Session is required." });
+  }
 
   try {
     let query = `
@@ -24,9 +27,9 @@ router.get("/", async (req, res) => {
       LEFT JOIN admissions a ON s.student_id = a.student_id
       LEFT JOIN physical_info pi ON s.student_id = pi.student_id
       LEFT JOIN social_info si ON s.student_id = si.student_id
-      WHERE 1=1
+      WHERE s.session = ?
     `;
-    const values = [];
+    const values = [session];
 
     if (name) {
       query += " AND s.name LIKE ?";
