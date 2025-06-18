@@ -21,7 +21,9 @@ router.get("/", async (req, res) => {
         p.father_name, p.mother_name,
         a.admission_no, a.admission_date,
         pi.height_cm, pi.weight_kg,
-        si.category
+        si.category,
+        si.PEN_Number,         -- Added
+        si.APAAR_Number        -- Added
       FROM students s
       LEFT JOIN parents p ON s.student_id = p.student_id
       LEFT JOIN admissions a ON s.student_id = a.student_id
@@ -99,6 +101,8 @@ router.put("/:id", async (req, res) => {
     height_cm,
     weight_kg,
     category,
+    PEN_Number,      // Added
+    APAAR_Number     // Added
   } = req.body;
 
   const conn = await db.getConnection();
@@ -181,8 +185,8 @@ router.put("/:id", async (req, res) => {
     const socialUpdate = buildUpdateQuery(
       "social_info",
       "student_id",
-      { category },
-      ["category"]
+      { category, PEN_Number, APAAR_Number }, // Added
+      ["category", "PEN_Number", "APAAR_Number"] // Added
     );
     if (socialUpdate) {
       await conn.execute(socialUpdate.sql, [...socialUpdate.values, student_id]);
