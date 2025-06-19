@@ -18,7 +18,7 @@ router.post('/full-register', async (req, res) => {
       father_name, mother_name,
       admission_no, admission_date,
       height_cm, weight_kg,
-      category
+      category,APAAR_Number, PEN_Number
     } = req.body;
 
     // Insert into students
@@ -52,8 +52,8 @@ router.post('/full-register', async (req, res) => {
 
     // Insert into social_info
     await connection.query(
-      `INSERT INTO social_info (student_id, category) VALUES (?, ?)`,
-      [student_id, category || null]
+      `INSERT INTO social_info (student_id, category, APAAR_Number, PEN_Number) VALUES (?, ?, ?, ?)`,
+      [student_id, category , APAAR_Number, PEN_Number|| null]
     );
 
     await connection.commit();

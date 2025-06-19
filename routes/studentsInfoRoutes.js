@@ -8,7 +8,7 @@ router.use(authMiddleware);
 
 // Route to get all students with optional filters
 router.get("/", async (req, res) => {
-  const { session, name, class: className, roll_number } = req.query;
+  const { session, name, class: className, admission_no } = req.query; // changed
 
   if (!session) {
     return res.status(400).json({ error: "Session is required." });
@@ -22,8 +22,8 @@ router.get("/", async (req, res) => {
         a.admission_no, a.admission_date,
         pi.height_cm, pi.weight_kg,
         si.category,
-        si.PEN_Number,         -- Added
-        si.APAAR_Number        -- Added
+        si.PEN_Number,
+        si.APAAR_Number
       FROM students s
       LEFT JOIN parents p ON s.student_id = p.student_id
       LEFT JOIN admissions a ON s.student_id = a.student_id
@@ -41,9 +41,9 @@ router.get("/", async (req, res) => {
       query += " AND s.class = ?";
       values.push(className);
     }
-    if (roll_number) {
-      query += " AND s.roll_number = ?";
-      values.push(roll_number);
+    if (admission_no) { // changed
+      query += " AND a.admission_no = ?";
+      values.push(admission_no);
     }
 
     const [results] = await db.execute(query, values);
