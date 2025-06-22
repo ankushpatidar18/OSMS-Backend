@@ -14,7 +14,7 @@ router.post('/full-register', async (req, res) => {
 
     const {
       name, gender, dob, aadhaar_number, mobile_number, address, pincode, sssmid,
-      class: className, medium, session, is_repeater, roll_number,
+      class: className, medium, session, roll_number,
       father_name, mother_name,
       admission_no, admission_date,
       height_cm, weight_kg,
@@ -23,11 +23,11 @@ router.post('/full-register', async (req, res) => {
 
     // Insert into students
     const [studentResult] = await connection.query(
-      `INSERT INTO students (name, gender, dob, aadhaar_number, mobile_number, address, pincode, sssmid, class, medium, session, is_repeater, roll_number)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO students (name, gender, dob, aadhaar_number, mobile_number, address, pincode, sssmid, class, medium, session, roll_number)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [name || null, gender || null, dob || null, aadhaar_number || null, mobile_number || null,
        address || null, pincode || null, sssmid || null, className || null,
-       medium || null, session || null, is_repeater != null ? is_repeater : null, roll_number || null]
+       medium || null, session || null, roll_number || null]
     );
 
     const student_id = studentResult.insertId;

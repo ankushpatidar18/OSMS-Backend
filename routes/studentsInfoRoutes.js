@@ -91,7 +91,6 @@ router.put("/:id", async (req, res) => {
     class: studentClass,
     medium,
     session,
-    is_repeater,
     mobile_number,
     roll_number,
     father_name,
@@ -124,7 +123,6 @@ router.put("/:id", async (req, res) => {
         class: studentClass,
         medium,
         session,
-        is_repeater,
         mobile_number,
         roll_number,
       },
@@ -139,7 +137,6 @@ router.put("/:id", async (req, res) => {
         "class",
         "medium",
         "session",
-        "is_repeater",
         "mobile_number",
         "roll_number",
       ]
@@ -200,6 +197,121 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to update student." });
   } finally {
     conn.release();
+  }
+});
+
+// Promote students to next class/session (copy info, new student_id)
+router.post('/promote', async (req, res) => {
+  const { fromSession, fromClass, toSession, toClass, studentIds } = req.body;
+
+  if (!fromSession || !fromClass || !toSession || !toClass) {
+    return res.status(400).json({ error: "All session/class fields are required." });
+  }
+
+  try {
+    // Get students to promote (by filter or by IDs)
+    let query = `
+      SELECT s.*, p.*, a.*, pi.*, si.*
+      FROM students s
+      LEFT JOIN parents p ON s.student_id = p.student_id
+      LEFT JOIN admissions a ON s.student_id = a.student_id
+      LEFT JOIN physical_info pi ON s.student_id = pi.student_id
+      LEFT JOIN social_info si ON s.student_id = si.student_id
+      WHERE s.session = ? AND s.class = ?
+    `;
+    const values = [fromSession, fromClass];
+
+    if (Array.isArray(studentIds) && studentIds.length > 0) {
+      query += ` AND s.student_id IN (${studentIds.map(() => '?').join(',')})`;
+      values.push(...studentIds);
+    }
+
+    const [students] = await db.execute(query, values);
+
+    if (!students.length) {
+      return res.status(404).json({ error: "No students found to promote." });
+    }
+
+    const conn = await db.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      let promotedCount = 0;
+      for (const student of students) {
+        // Check if already promoted
+       const [existing] = await conn.execute(
+  `SELECT s.student_id
+   FROM students s
+   LEFT JOIN parents p ON s.student_id = p.student_id
+   WHERE s.name = ? AND s.dob = ? AND COALESCE(p.father_name, '') = COALESCE(?, '') AND s.session = ? AND s.class = ?`,
+  [student.name, student.dob, student.father_name, toSession, toClass]
+);
+        if (existing.length > 0) continue;
+
+        // Insert into students (new student_id, new class/session)
+        const [studentResult] = await conn.execute(
+          `INSERT INTO students 
+            (name, gender, dob, aadhaar_number, address, pincode, sssmid, class, medium, session, mobile_number, roll_number)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            student.name,
+            student.gender,
+            student.dob,
+            student.aadhaar_number,
+            student.address,
+            student.pincode,
+            student.sssmid,
+            toClass,      // new class
+            student.medium,
+            toSession,    // new session
+            student.mobile_number,
+            student.roll_number
+          ]
+        );
+        const newStudentId = studentResult.insertId;
+
+        // Copy parents
+        await conn.execute(
+          `INSERT INTO parents (student_id, father_name, mother_name)
+           VALUES (?, ?, ?)`,
+          [newStudentId, student.father_name, student.mother_name]
+        );
+
+        // Copy admissions
+        await conn.execute(
+          `INSERT INTO admissions (student_id, admission_no, admission_date)
+           VALUES (?, ?, ?)`,
+          [newStudentId, student.admission_no, student.admission_date]
+        );
+
+        // Copy physical_info
+        await conn.execute(
+          `INSERT INTO physical_info (student_id, height_cm, weight_kg)
+           VALUES (?, ?, ?)`,
+          [newStudentId, student.height_cm, student.weight_kg]
+        );
+
+        // Copy social_info
+        await conn.execute(
+          `INSERT INTO social_info (student_id, category, PEN_Number, APAAR_Number)
+           VALUES (?, ?, ?, ?)`,
+          [newStudentId, student.category, student.PEN_Number, student.APAAR_Number]
+        );
+        promotedCount++;
+      }
+
+      await conn.commit();
+      res.json({ message: `${promotedCount} students promoted successfully.` });
+    } catch (err) {
+      await conn.rollback();
+      console.error("Promotion error:", err);
+      res.status(500).json({ error: "Failed to promote students." });
+    } finally {
+      conn.release();
+    }
+  } catch (err) {
+    console.error("Error in promotion:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

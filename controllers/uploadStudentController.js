@@ -68,7 +68,6 @@ exports.uploadStudentExcel = async (req, res) => {
         class: getCell(row, 'Class'),
         medium: getCell(row, 'Medium Of Instruction'),
         session: getCell(row, 'Session'),
-        is_repeater: getCell(row, 'Is Repeater') === 'YES',
         mobile_number: getCell(row, 'Mobile No.')
       };
 
@@ -80,8 +79,8 @@ exports.uploadStudentExcel = async (req, res) => {
       // === Insert into students table ===
       const [studentResult] = await connection.query(`
         INSERT INTO students 
-        (name, gender, dob, aadhaar_number, address, pincode, sssmid, class, medium, session, is_repeater, mobile_number)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (name, gender, dob, aadhaar_number, address, pincode, sssmid, class, medium, session, mobile_number)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         Object.values(studentData)
       );
       const student_id = studentResult.insertId;
