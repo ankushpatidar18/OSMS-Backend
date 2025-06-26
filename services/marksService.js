@@ -10,7 +10,7 @@ exports.getMarksEntryStatus = async (class_subject_id, exam_id) => {
   return rows;
 };
 
-exports.upsertMarks = async (class_subject_id, exam_id, marks, userId = null) => {
+exports.upsertMarks = async (class_subject_id, exam_id, marks, userId) => {
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();

@@ -15,7 +15,7 @@ exports.getMarksEntryStatus = async (req, res) => {
 
 exports.upsertMarks = async (req, res) => {
   const { class_subject_id, exam_id, marks } = req.body;
-  const userId = null;
+  const userId = req.user?.id; 
   if (!class_subject_id || !exam_id || !marks?.length) {
     return res.status(400).json({ error: 'Missing required fields' });
   }

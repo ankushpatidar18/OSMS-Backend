@@ -7,7 +7,7 @@ router.post('/admin/login', loginAdmin);
 
 router.post('/admin/logout', logoutAdmin);
 
-// GET /api/admin/me
+// for regularly checking
 router.get('/admin/me', authMiddleware, (req, res) => {
   res.json({ admin: req.user });
 });
