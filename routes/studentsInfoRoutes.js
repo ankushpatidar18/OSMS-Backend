@@ -18,8 +18,9 @@ router.get("/", async (req, res) => {
     let query = `
       SELECT 
         s.*,
+        DATE_FORMAT(s.dob, '%Y-%m-%d') AS dob,   -- Add this line
         p.father_name, p.mother_name,
-        a.admission_no, a.admission_date,
+        a.admission_no, DATE_FORMAT(a.admission_date, '%Y-%m-%d') AS admission_date,
         pi.height_cm, pi.weight_kg,
         si.category,
         si.PEN_Number,
