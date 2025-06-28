@@ -1,7 +1,7 @@
-const pool = require('../../db');
+const db = require('../../db');
 
 exports.getStudentsByClassAndSession = async (className, session) => {
-  const [rows] = await pool.query(
+  const [rows] = await db.query(
     `SELECT s.student_id, s.name, s.roll_number, p.father_name
      FROM students s
      JOIN parents p ON s.student_id = p.student_id

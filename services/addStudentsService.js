@@ -1,7 +1,7 @@
-const pool = require('../db');
+const db = require('../db');
 
 exports.fullRegister = async (data) => {
-  const connection = await pool.getConnection();
+  const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
     const {

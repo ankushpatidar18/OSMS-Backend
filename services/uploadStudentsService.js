@@ -2,7 +2,7 @@ const ExcelJS = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 const FileType = require('file-type');
-const pool = require('../db');
+const db = require('../db');
 
 exports.processStudentExcel = async (file) => {
   let filePath;
@@ -47,7 +47,7 @@ exports.processStudentExcel = async (file) => {
     };
 
     // 6. Start DB transaction
-    connection = await pool.getConnection();
+    connection = await db.getConnection();
     await connection.beginTransaction();
 
     // 7. Loop through each student row

@@ -1,7 +1,7 @@
-const pool = require('../db');
+const db = require('../db');
 
 exports.getSchedules = async (className, examId) => {
-  const [rows] = await pool.query(
+  const [rows] = await db.query(
     `SELECT 
        es.schedule_id,
        es.subject_id,
@@ -21,7 +21,7 @@ exports.getSchedules = async (className, examId) => {
 };
 
 exports.addSchedule = async ({ exam_id, class_name, subject_id, exam_date, exam_day, exam_time }) => {
-  const [result] = await pool.query(
+  const [result] = await db.query(
     `INSERT INTO exam_schedules (exam_id, class_name, subject_id, exam_date, exam_day, exam_time)
      VALUES (?, ?, ?, ?, ?, ?)`,
     [exam_id, class_name, subject_id, exam_date, exam_day, exam_time]
@@ -30,7 +30,7 @@ exports.addSchedule = async ({ exam_id, class_name, subject_id, exam_date, exam_
 };
 
 exports.editSchedule = async ({ schedule_id, exam_date, exam_day, exam_time, subject_id }) => {
-  await pool.query(
+  await db.query(
     `UPDATE exam_schedules SET exam_date=?, exam_day=?, exam_time=?, subject_id=?
      WHERE schedule_id=?`,
     [exam_date, exam_day, exam_time, subject_id, schedule_id]
@@ -38,5 +38,5 @@ exports.editSchedule = async ({ schedule_id, exam_date, exam_day, exam_time, sub
 };
 
 exports.deleteSchedule = async (schedule_id) => {
-  await pool.query(`DELETE FROM exam_schedules WHERE schedule_id=?`, [schedule_id]);
+  await db.query(`DELETE FROM exam_schedules WHERE schedule_id=?`, [schedule_id]);
 };

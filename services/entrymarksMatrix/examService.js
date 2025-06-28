@@ -1,7 +1,7 @@
-const pool = require('../../db');
+const db = require('../../db');
 
 exports.getExamsForClass = async (className, session, classGroup) => {
-  const [rows] = await pool.query(
+  const [rows] = await db.query(
     `SELECT e.exam_id, e.name, e.total_marks
      FROM exams e
      JOIN exam_schedules es ON e.exam_id = es.exam_id

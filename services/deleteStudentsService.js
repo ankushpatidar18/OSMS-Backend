@@ -1,7 +1,7 @@
-const pool = require('../db');
+const db = require('../db');
 
 exports.deleteManyStudents = async (studentIds) => {
-  const connection = await pool.getConnection();
+  const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
     await connection.query(
@@ -26,7 +26,7 @@ exports.deleteManyStudents = async (studentIds) => {
 };
 
 exports.filterStudents = async (session, className) => {
-  const [rows] = await pool.query(
+  const [rows] = await db.query(
     `SELECT s.student_id, s.name, p.father_name, p.mother_name, a.admission_no
      FROM students s
      LEFT JOIN parents p ON s.student_id = p.student_id

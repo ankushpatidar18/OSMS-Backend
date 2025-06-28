@@ -1,7 +1,7 @@
-const pool = require('../../db');
+const db = require('../../db');
 
 exports.getMarksByStudentId = async (student_id) => {
-  const [rows] = await pool.query(
+  const [rows] = await db.query(
     `SELECT sm.exam_id, sm.class_subject_id, sm.marks_obtained
      FROM student_marks sm
      WHERE sm.student_id = ?`,
@@ -11,7 +11,7 @@ exports.getMarksByStudentId = async (student_id) => {
 };
 
 exports.saveStudentMarks = async (student_id, marks, recorded_by) => {
-  const connection = await pool.getConnection();
+  const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
     for (const mark of marks) {
