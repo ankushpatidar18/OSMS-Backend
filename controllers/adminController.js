@@ -1,57 +1,32 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const db = require('../db');
+const adminService = require('../services/adminService');
 
 exports.loginAdmin = async (req, res) => {
- const { email, password } = req.body;
- 
-
+  const { email, password } = req.body;
   try {
-    const [rows] = await db.query('SELECT * FROM admin WHERE email = ?', [email]);
-    if (rows.length === 0) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
+    const { token, admin } = await adminService.loginAdmin(email, password);
 
-    const admin = rows[0];
-    const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-    // Create token
-    const token = jwt.sign(
-      { id: admin.admin_id, email: admin.email, roll_number: 'admin' },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
-    );
-
-    // Set cookie
-   res.cookie('token', token, {
-  httpOnly: true,
-  secure: false,          // ✅ false for localhost (no https)
-  sameSite: 'lax',        // ✅ 'lax' works better on localhost
-  maxAge: 24 * 60 * 60 * 1000
-});
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // true in production
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000
+    });
 
     res.status(200).json({
       message: 'Login successful',
-      admin: {
-        name: admin.full_name,
-        email: admin.email
-      }
+      admin
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(401).json({ message: err.message || 'Invalid email or password' });
   }
 };
 
 exports.logoutAdmin = (req, res) => {
- res.clearCookie("token", {
-  httpOnly: true,
-  sameSite: "lax",         // ✅
-  secure: false,           // ✅
-});
-
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    secure: process.env.NODE_ENV === 'production'
+  });
   res.status(200).json({ message: "Logged out successfully" });
 };
 

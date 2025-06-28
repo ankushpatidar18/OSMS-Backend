@@ -3,12 +3,12 @@ const { loginAdmin, logoutAdmin } = require('../controllers/adminController');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 
-router.post('/admin/login', loginAdmin);
+router.post('/login', loginAdmin);
 
-router.post('/admin/logout', logoutAdmin);
+router.post('/logout', logoutAdmin);
 
 // for regularly checking
-router.get('/admin/me', authMiddleware, (req, res) => {
+router.get('/me', authMiddleware, (req, res) => {
   res.json({ admin: req.user });
 });
 

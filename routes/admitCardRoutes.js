@@ -9,7 +9,7 @@ router.use(authMiddleware);
 
 router.get('/classes', admitCardController.getClasses);
 router.get('/exams', admitCardController.getExams);
-router.get('/admit-card-data', admitCardController.getAdmitCardData);
+router.get('/data', admitCardController.getAdmitCardData);
 
 
 

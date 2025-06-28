@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.use(authMiddleware);
 
-router.post("/upload-students", upload.single("file"), uploadStudentController.uploadStudentExcel);
+router.post("/students", upload.single("file"), uploadStudentController.uploadStudentExcel);
 
 
 module.exports = router;

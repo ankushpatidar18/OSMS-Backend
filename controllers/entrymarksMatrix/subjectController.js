@@ -1,17 +1,14 @@
-
-const pool = require('../../db');
+const subjectService = require('../../services/entrymarksMatrix/subjectService');
 
 exports.getSubjectsByClass = async (req, res) => {
   const { class: className } = req.params;
+  if (!className) {
+    return res.status(400).json({ error: 'class is required' });
+  }
   try {
-    const [rows] = await pool.query(`
-      SELECT cs.id AS class_subject_id, s.subject_name
-      FROM class_subjects cs
-      JOIN subjects s ON cs.subject_id = s.subject_id
-      WHERE cs.class = ?
-    `, [className]);
+    const rows = await subjectService.getSubjectsByClass(className);
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch subjects', details: err });
+    res.status(500).json({ error: 'Failed to fetch subjects' });
   }
 };

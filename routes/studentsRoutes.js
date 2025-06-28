@@ -5,6 +5,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.use(authMiddleware);
 
-router.get('/for-class/:class', studentsController.getStudentsForClass);
+router.get('/:class', studentsController.getStudentsForClass);
 
 module.exports = router;

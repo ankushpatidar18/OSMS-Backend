@@ -1,6 +1,11 @@
-
 const mysql = require('mysql2');
 require('dotenv').config();
+
+['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'DB_PORT'].forEach((key) => {
+  if (!process.env[key]) {
+    console.warn(`Warning: Environment variable ${key} is not set.`);
+  }
+});
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,

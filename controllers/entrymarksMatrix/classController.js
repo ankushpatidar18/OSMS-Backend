@@ -1,13 +1,10 @@
-
-const pool = require('../../db'); 
+const classService = require('../../services/entrymarksMatrix/classService');
 
 exports.getUniqueClasses = async (req, res) => {
   try {
-    const [rows] = await pool.query(`
-      SELECT DISTINCT class FROM class_subjects ORDER BY class
-    `);
-    res.json(rows.map(row => row.class));
+    const classes = await classService.getUniqueClasses();
+    res.json(classes);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch classes', details: err });
+    res.status(500).json({ error: 'Failed to fetch classes' });
   }
 };
