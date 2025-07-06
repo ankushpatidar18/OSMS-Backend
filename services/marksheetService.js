@@ -130,7 +130,7 @@ exports.generateMarksheet = async (className, session) => {
       fatherName: (student.father_name || '').toUpperCase(),
       motherName: (student.mother_name || '').toUpperCase(),
       dateOfBirth: student.dob || '',
-      class: student.class + ' TH',
+      class: student.class,
       subjects: studentSubjects,
       totalMarks: totalMarks,
       obtainedMarks: obtainedMarks,
