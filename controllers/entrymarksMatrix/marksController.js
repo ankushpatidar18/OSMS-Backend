@@ -14,7 +14,8 @@ exports.getMarksByStudentId = async (req, res) => {
 };
 
 exports.saveStudentMarks = async (req, res) => {
-  const { marks, student_id, recorded_by } = req.body;
+  const { marks, student_id} = req.body;
+  const recorded_by = req.user?.user_id || 1;
   if (!Array.isArray(marks) || !student_id) {
     return res.status(400).json({ error: 'Invalid payload' });
   }

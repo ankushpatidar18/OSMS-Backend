@@ -15,7 +15,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.use('/api/admin', require('./routes/authRoutes'));
+app.use('/api/user', require('./routes/authRoutes'));
 app.use('/api/admit-card', require('./routes/admitCardRoutes'));
 app.use('/api/upload', require('./routes/uploadStudentRoutes'));
 app.use('/api/exam-schedules', require('./routes/examScheduleRoutes'));

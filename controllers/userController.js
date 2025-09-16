@@ -1,27 +1,25 @@
-const adminService = require('../services/adminService');
+const userService = require('../services/userService'); 
 
-exports.loginAdmin = async (req, res) => {
-  const { email, password } = req.body;
+exports.loginUser = async (req, res) => {
+  const { email, password, role } = req.body;
   try {
-    const { token, admin } = await adminService.loginAdmin(email, password);
-
+    const { token, user } = await userService.loginUser(email, password, role);
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 24 * 60 * 60 * 1000
     });
-
     res.status(200).json({
       message: 'Login successful',
-      admin
+      user 
     });
   } catch (err) {
     res.status(401).json({ message: err.message || 'Invalid email or password' });
   }
 };
 
-exports.logoutAdmin = (req, res) => {
+exports.logoutUser = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',

@@ -25,7 +25,7 @@ router.get('/entry-status', authMiddleware,async (req, res) => {
 // Route to enter or update marks for students
 router.post('/',authMiddleware, async (req, res) => {
   const { class_subject_id, exam_id, marks } = req.body;
-  const userId = req.user?.id || null; 
+  const userId = req.user?.user_id || 1; 
 
   if (!class_subject_id || !exam_id || !marks?.length) {
     return res.status(400).json({ error: 'Missing required fields' });
